@@ -118,10 +118,13 @@ class Users extends BaseController {
         $user->setLevel(ILevelEnum::LEVEL_USER);
         $user->setRegistrationDate(time());
         $user->setCode($code);
-
+        $checkEmailValid = $this->_mdusers->checkUniqueEmail($user->getEmail());
+        if ($checkEmailValid != 0) {
+            sendError(['email' => 'This email is already taken']);
+        }
         $result = $this->_mdusers->addUser($user);
         if (!$result) {
-            sendError(['email' => 'This email is already taken']);
+            sendError(['email' => 'Wrong information have']);
         }
         require_once(PATH . '/application/views/active_user.php');
     }
@@ -170,6 +173,13 @@ class Users extends BaseController {
             $field = $_POST['field'];
             $id = $_POST['id'];
             $value = $_POST['value'];
+            if (filter_var($value, FILTER_VALIDATE_EMAIL) == false) {
+                sendError(['email' => 'Wrong email address']);
+            }
+            $checkEmailValid = $this->_mdusers->checkUniqueEmail($value);
+            if ($checkEmailValid != 0) {
+                sendError(['email' => 'This email is already taken']);
+            }
             $this->_mdusers->updateUser($table, $field, $id, $value);
         }
         header('Location: /users/admin_panel');

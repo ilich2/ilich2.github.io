@@ -29,18 +29,26 @@ class MDUsers extends BaseModel {
     }
 
     /**
+     * Check unique email
+     * @param string $email - email for valid
+     * @return int  if email already exist return 1, else 0
+     */
+    public function checkUniqueEmail($email)
+    {
+        $db = $this->_db->connect_to_db();
+        $result = $db->query("SELECT * FROM `users` WHERE email = '".$email."'");
+        return $result->num_rows;
+    }
+
+    /**
      * Add user to database
      * @param DBUsers $user
      * @return int
      */
     public function addUser(DBUsers $user) {
         $db = $this->_db->connect_to_db();
-        if(!$db->query("SELECT email FROM users WHERE email='".$user->getEmail()."'")) {
-            return false;
-        }
 
-
-        $db->query("INSERT INTO " . DBUsers::getTableName() . " (`id`, `email`, `password`, `level`, `access`, 
+       return $db->query("INSERT INTO " . DBUsers::getTableName() . " (`id`, `email`, `password`, `level`, `access`, 
         `registrationDate`, `code`)
             VALUES ('" . $user->getId() . "', 
             '" . $user->getEmail() . "', 
@@ -49,8 +57,6 @@ class MDUsers extends BaseModel {
             '" . $user->getAccess() . "', 
             '" . $user->getRegistrationDate() . "', 
             '" . $user->getCode() . "');");
-
-        return $db->insert_id;
     }
 
     /**
@@ -107,7 +113,7 @@ class MDUsers extends BaseModel {
     public function getAllUsers()
     {
         $db = $this->_db->connect_to_db();
-        $data = $db->query("SELECT * FROM users WHERE level IN (SELECT level FROM users GROUP BY level HAVING COUNT(*) > 1)");
+        $data = $db->query("SELECT * FROM `users` WHERE level = 'user'");
 
         if (!$data->num_rows) {
             return [];

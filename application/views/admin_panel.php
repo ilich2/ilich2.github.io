@@ -36,5 +36,6 @@
     endif; ?>
     </tbody>
 </table>
+<p><a href="/users/logout/">Выйти</a> из системы</p>
 </body>
 </html>
