@@ -1,0 +1,23 @@
+AddDefaultCharset UTF-8
+<IfModule mod_rewrite.c>
+        RewriteEngine On
+        RewriteCond %{REQUEST_FILENAME} !-f
+        RewriteCond %{REQUEST_FILENAME} !-d
+        RewriteRule ^(.*)$ index.php?/$1 [L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+        # If we don't have mod_rewrite installed, all 404's
+        # can be sent to index.php, and everything works as normal.
+        # Submitted by: ElliotHaughin
+    ErrorDocument 404 /index.php
+</IfModule>
+
+php_flag display_startup_errors on
+php_flag display_errors on
+php_flag html_errors on
+php_value post_max_size 2048M
+php_value upload_max_filesize 2048M
+<IfModule mod_php5.c>
+php_value memory_limit 64M
+</IfModule>
